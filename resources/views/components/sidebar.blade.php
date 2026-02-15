@@ -25,19 +25,21 @@
             <ul class="nav nav-secondary">
                 @foreach ($links as $link)
                     @if ($link['is_dropdown'])
-                        <li class="nav-item {{$link['is_active'] ? 'active' : ''}}">
+                        <li class="nav-item {{$link['is_active'] ? 'active  ' : ''}}">
                             <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
                                 <i class="{{$link['icon']}}"></i>
-                                <p>{{ $links['label'] }}</p>
+                                <p>{{ $link['label'] }}</p>
                                 <span class="caret"></span>
                             </a>
                             <div class="collapse" id="dashboard">
                                 <ul class="nav nav-collapse">
-                                    <li>
-                                        <a href="../demo1/index.html">
-                                            <span class="sub-item">Dashboard 1</span>
-                                        </a>
-                                    </li>
+                                    @foreach ($link['items'] as $item)
+                                        <li>
+                                            <a href="{{route($item['route'])}}">
+                                                <span class="sub-item">{{ $item['label'] }}</span>
+                                            </a>
+                                        </li>
+                                    @endforeach
                                 </ul>
                             </div>
                         </li>
