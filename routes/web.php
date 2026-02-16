@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KategoriProdukController;
+use App\Http\Controllers\ProdukController;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
@@ -15,5 +16,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::middleware('auth')->group(function () {
     Route::prefix('master-data')->name('master-data.')->group(function () {
         Route::resource('kategori-produk', KategoriProdukController::class);
+        Route::resource('produk', ProdukController::class);
     });
 });
