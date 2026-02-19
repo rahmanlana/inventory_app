@@ -62,7 +62,7 @@ class ProdukController extends Controller
         $produk->update([
             'nama_produk' => $request->nama_produk,
             'deskripsi_produk' => $request->deskripsi_produk,
-            'kategori_produk' => $request->kategori_produk_id
+            'kategori_produk_id' => $request->kategori_produk_id
         ]);
         toast()->success('kategori produk berhasil diubah');
         return redirect()->route('master-data.produk.index');

@@ -12,18 +12,127 @@
             <x-meta-item label="Deskripsi" value="{{ $produk->deskripsi_produk }}" />
             <div class="mt-2">
                 <div class="d-flex justify-content-end">
-                    <button class="btn btn-primary">Tambah Varian</button>
+                    <button type="button" class="btn btn-dark btn-sm btn-round" data-bs-toggle="modal"
+                        data-bs-target="#modalFormVarian" id="btnTambahVarian">
+                        Tambah Varian
+                    </button>
                 </div>
-                {{-- tempat looping semua data varian --}}
-                <div class="row mt-2">
-                    <div class="col-12">
-                        <div class="alert alert-info" style="box-shadow: none">
-                            <span>Belum ada varian produk, Silahkan tambahkan varian yang baru</span>
+            </div>
+            <div class="row mt-2">
+                @forelse ($produk->varian as $item)
+                    <div class="col-4">
+                        <x-produk.card-varian :varian="$item" />
+                    </div>
+                @empty
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <div class="alert alert-info" style="box-shadow: none">
+                                <span>Belum ada varian produk, Silahkan tambahkan varian yang baru</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endforelse
+
+                {{-- tempat looping semua data varian --}}
+
                 {{-- end tempat looping semua data varian --}}
             </div>
         </div>
     </div>
+    <x-produk.form-varian />
 @endsection
+@push('script')
+    <script>
+        $(document).ready(function () {
+            let modalEl = $('#modalFormVarian');
+            let modal = new bootstrap.Modal(modalEl);
+            let $form = $('#modalFormVarian form');
+
+            $('#btnTambahVarian').on('click', function () {
+                $form[0].reset();
+                $form.attr('action');
+                $form.find('small.text-danger').text('');
+                $('#modalFormVarian .modal-title').text('Tambah Varian Baru');
+                modal.show();
+            });
+
+            $(".btnEditVarian").on('click', function () {
+                let nama_varian = $(this).data('nama-varian');
+                let harga_varian = $(this).data('harga-varian');
+                let stok_varian = $(this).data('stok-varian');
+                let action = $(this).data('action');
+
+                $form[0].reset();
+                $form.attr('action', action);
+
+                $form.append('<input type="hidden" name="_method" value="PUT">');
+
+                $form.find('input[name="nama_varian"]').val(nama_varian);
+                $form.find('input[name="harga_varian"]').val(harga_varian);
+                $form.find('input[name="stok_varian"]').val(stok_varian);
+                $form.find('small.text-danger').text('');
+                $('#modalFormVarian .modal-title').text('Edit Varian');
+
+                modal.show();
+            });
+
+
+            $form.submit(function (e) {
+                e.preventDefault();
+                let formData = new FormData(this);
+
+                let $btnSubmit = $form.find('button[type="submit"]');
+
+                $btnSubmit.prop('disabled', true).text('Menyimpan...');
+
+                $.ajax({
+
+                    type: $form.attr('method'),
+                    url: $form.attr('action'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        swal({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: response.message,
+                            timer: 2000
+                        }).then(() => {
+                            modal.hide();
+                            location.reload();
+                        }
+                        )
+                    },
+                    error: function (xhr) {
+                        let error = xhr.responseJSON.errors;
+                        console.log(error);
+
+                        $form.find('small.text-danger').text('');
+                        $.each(error, function (key, val) {
+                            $form.find('[name="' + key + '"]').next('small.text-danger').text(val[0]);
+                        });
+                        $btnSubmit.prop('disabled', false).text('Simpan');
+                    }
+                });
+            });
+
+            $(".formDeleteVarian").on('submit', function (e) {
+                e.preventDefault();
+
+                const form = this;
+                swal({
+                    title: 'Apakah Anda yakin?',
+                    text: 'Anda tidak dapat mengembalikan data ini',
+                    icon: 'warning',
+                    buttons: true,
+                    dangerMode: true
+                }).then((isConfirm) => {
+                    if (isConfirm) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

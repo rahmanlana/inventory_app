@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class VarianProduk extends Model
+{
+    protected $fillable = [
+        'produk_id',
+        'nomor_sku',
+        'nama_varian',
+        'harga_varian',
+        'stok_varian',
+        'gambar_varian'
+    ];
+    
+
+    public static function generateNomorSku(){
+        $maxId = self::max('id') ?? 0;
+        $prefic = "SKU";
+        $nomorSKU = $prefic . str_pad($maxId + 1, 6, "0", STR_PAD_LEFT);
+        return $nomorSKU;
+        }
+}
