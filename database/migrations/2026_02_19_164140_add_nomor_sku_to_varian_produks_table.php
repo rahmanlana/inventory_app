@@ -10,17 +10,25 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::table('varian_produks', function (Blueprint $table) {
-        $table->string('nomor_sku')->after('produk_id');
-    });
-}
+    {
+        // Mengecek apakah kolom 'nomor_sku' BELUM ada, baru menambahkannya
+        if (!Schema::hasColumn('varian_produks', 'nomor_sku')) {
+            Schema::table('varian_produks', function (Blueprint $table) {
+                $table->string('nomor_sku')->after('produk_id');
+            });
+        }
+    }
 
-public function down(): void
-{
-    Schema::table('varian_produks', function (Blueprint $table) {
-        $table->dropColumn('nomor_sku');
-    });
-}
-
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        // Mengecek apakah kolom 'nomor_sku' ADA, baru menghapusnya
+        if (Schema::hasColumn('varian_produks', 'nomor_sku')) {
+            Schema::table('varian_produks', function (Blueprint $table) {
+                $table->dropColumn('nomor_sku');
+            });
+        }
+    }
 };

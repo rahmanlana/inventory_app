@@ -14,6 +14,10 @@ class VarianProduk extends Model
         'stok_varian',
         'gambar_varian'
     ];
+
+    public function produk(){
+        return $this->belongsTo(Produk::class);
+    }
     
 
     public static function generateNomorSku(){
